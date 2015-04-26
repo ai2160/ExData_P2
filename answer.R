@@ -117,6 +117,8 @@ dev.off()
 #There are several options for defining a 'Vehicle' and this is the assumption I made after
 #looking at SCC table
 #LA topped Baltimore by multiple folds. Surprise Surprise. Atleast it is trending down ward since 2005
+#Baltimore has a greater change and the PM 2.5 have decreased more in Baltimore than they have increased
+#in LA
 
 library(plyr)
 library(ggplot2)
@@ -138,8 +140,14 @@ clean_data <- data[data$SCC %in% SCCids,]
 
 VehiclePMbyYear <- ddply(clean_data, .(year,City), summarize, YearSum = sum(Emissions))
 
-plot <- ggplot(VehiclePMbyYear, aes(x=year, y=YearSum, col=City))
+plot <- ggplot(VehiclePMbyYear, aes(x=year, y=YearSum, col=City)) +
+  labs(y='Vehicle PM2.5 Emissions', title='Vehicle PM2.5 Emissions over years')
+  
+plot <- plot + annotate("rect", xmin = 2004, xmax=2008, ymin=3600, ymax=3900, alpha = .2)
+plot <- plot + annotate("rect", xmin = 2004, xmax=2008, ymin=300, ymax=600, alpha = .2)
+plot <- plot + annotate("text", x = 2006, y = 3750, label = "Change = +170.2", col = 'cyan')
+plot <- plot + annotate("text", x = 2006, y = 450, label = "Change = -258.5", col = 'red')
 
 png('6.png')
-plot+geom_line()+labs(y='Vehicle PM2.5 Emissions', title='Vehicle PM2.5 Emissions over years')
+plot+ geom_line()
 dev.off()
